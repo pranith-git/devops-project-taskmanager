@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- SEO -->
+    <title>Task Manager</title>
+    <meta
+      name="description"
+      content="A simple and clean task manager to add, complete, and delete your daily tasks."
+    />
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app-wrapper">
+      <!-- Header -->
+      <header class="app-header">
+        <div class="header-icon" aria-hidden="true">✓</div>
+        <h1 class="app-title">Task Manager</h1>
+        <p class="app-subtitle">Stay organised, one task at a time.</p>
+      </header>
+
+      <!-- Task Input -->
+      <section class="input-section" aria-label="Add a new task">
+        <form id="task-form" class="task-form" novalidate>
+          <input
+            id="task-input"
+            class="task-input"
+            type="text"
+            placeholder="What needs to be done?"
+            aria-label="New task description"
+            maxlength="150"
+            autocomplete="off"
+          />
+          <button id="add-btn" class="btn btn-add" type="submit">
+            Add Task
+          </button>
+        </form>
+
+        <!-- Inline error message -->
+        <p id="error-msg" class="error-msg" role="alert" aria-live="polite"></p>
+      </section>
+
+      <!-- Stats Bar -->
+      <div class="stats-bar">
+        <span id="stats-total" class="stat">0 tasks</span>
+        <span id="stats-completed" class="stat stat-completed">0 completed</span>
+      </div>
+
+      <!-- Task List -->
+      <main>
+        <ul id="task-list" class="task-list" aria-label="Task list">
+          <!-- Tasks are injected here by script.js -->
+        </ul>
+
+        <!-- Empty state shown when no tasks exist -->
+        <div id="empty-state" class="empty-state">
+          <div class="empty-icon" aria-hidden="true">📋</div>
+          <p>No tasks yet. Add one above to get started!</p>
+        </div>
+      </main>
+
+      <!-- Footer -->
+      <footer class="app-footer">
+        Task Manager &mdash; Initial Version
+      </footer>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

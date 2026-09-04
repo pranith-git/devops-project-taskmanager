@@ -1,0 +1,401 @@
+/* ============================================================
+   CSS CUSTOM PROPERTIES (Design Tokens)
+   Centralising colours, spacing, and radii makes it easy for
+   team members to retheme the app in one place.
+   ============================================================ */
+:root {
+  /* Colour Palette */
+  --clr-bg:           #0f1117;
+  --clr-surface:      #1a1d27;
+  --clr-surface-alt:  #22263a;
+  --clr-border:       #2e334d;
+  --clr-accent:       #6c63ff;
+  --clr-accent-hover: #574fd6;
+  --clr-success:      #34d399;
+  --clr-danger:       #f87171;
+  --clr-danger-hover: #ef4444;
+  --clr-text-primary: #e8eaf6;
+  --clr-text-muted:   #7b82a8;
+  --clr-completed:    #4b5280;
+
+  /* Spacing */
+  --sp-xs:  4px;
+  --sp-sm:  8px;
+  --sp-md:  16px;
+  --sp-lg:  24px;
+  --sp-xl:  40px;
+
+  /* Border Radius */
+  --radius-sm:  6px;
+  --radius-md:  12px;
+  --radius-lg:  20px;
+  --radius-pill: 999px;
+
+  /* Typography */
+  --font-body: 'Inter', system-ui, sans-serif;
+
+  /* Shadows */
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+  --shadow-btn:  0 2px 12px rgba(108, 99, 255, 0.4);
+
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-mid:  0.25s ease;
+}
+
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--clr-bg);
+  color: var(--clr-text-primary);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: var(--sp-xl) var(--sp-md);
+  line-height: 1.6;
+}
+
+/* ============================================================
+   APP WRAPPER  (card container)
+   ============================================================ */
+.app-wrapper {
+  width: 100%;
+  max-width: 580px;
+  background-color: var(--clr-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--clr-border);
+  padding: var(--sp-xl) var(--sp-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-lg);
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.app-header {
+  text-align: center;
+}
+
+.header-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  background: linear-gradient(135deg, var(--clr-accent), #9b8fff);
+  border-radius: var(--radius-md);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: var(--sp-sm);
+  box-shadow: var(--shadow-btn);
+}
+
+.app-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--clr-text-primary);
+}
+
+.app-subtitle {
+  margin-top: var(--sp-xs);
+  font-size: 0.875rem;
+  color: var(--clr-text-muted);
+}
+
+/* ============================================================
+   INPUT SECTION
+   ============================================================ */
+.task-form {
+  display: flex;
+  gap: var(--sp-sm);
+}
+
+.task-input {
+  flex: 1;
+  padding: 12px var(--sp-md);
+  background-color: var(--clr-surface-alt);
+  border: 1.5px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  color: var(--clr-text-primary);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.task-input::placeholder {
+  color: var(--clr-text-muted);
+}
+
+.task-input:focus {
+  border-color: var(--clr-accent);
+  box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+}
+
+/* Error state on the input */
+.task-input.is-error {
+  border-color: var(--clr-danger);
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.2);
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn {
+  padding: 12px var(--sp-lg);
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--transition-fast),
+              transform var(--transition-fast),
+              box-shadow var(--transition-fast);
+  white-space: nowrap;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+/* Primary add button */
+.btn-add {
+  background: linear-gradient(135deg, var(--clr-accent), #9b8fff);
+  color: #fff;
+  box-shadow: var(--shadow-btn);
+}
+
+.btn-add:hover {
+  background: linear-gradient(135deg, var(--clr-accent-hover), #7c6fe0);
+  box-shadow: 0 4px 16px rgba(108, 99, 255, 0.5);
+}
+
+/* ============================================================
+   ERROR MESSAGE
+   ============================================================ */
+.error-msg {
+  min-height: 20px;
+  font-size: 0.8rem;
+  color: var(--clr-danger);
+  margin-top: var(--sp-xs);
+  transition: opacity var(--transition-mid);
+}
+
+/* ============================================================
+   STATS BAR
+   ============================================================ */
+.stats-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--sp-sm) var(--sp-md);
+  background-color: var(--clr-surface-alt);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--clr-border);
+}
+
+.stat {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--clr-text-muted);
+}
+
+.stat-completed {
+  color: var(--clr-success);
+}
+
+/* ============================================================
+   TASK LIST
+   ============================================================ */
+.task-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-sm);
+}
+
+/* Individual task item */
+.task-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-md);
+  padding: var(--sp-md);
+  background-color: var(--clr-surface-alt);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  transition: border-color var(--transition-mid),
+              background-color var(--transition-mid),
+              opacity var(--transition-mid),
+              transform var(--transition-mid);
+
+  /* Animate in when added */
+  animation: slide-in 0.25s ease forwards;
+}
+
+.task-item:hover {
+  border-color: var(--clr-accent);
+}
+
+/* Completed state */
+.task-item.is-completed {
+  opacity: 0.6;
+  background-color: var(--clr-surface);
+  border-color: var(--clr-completed);
+}
+
+.task-item.is-completed .task-text {
+  text-decoration: line-through;
+  color: var(--clr-completed);
+}
+
+/* Animate out on removal */
+.task-item.removing {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+/* --- Checkbox --- */
+.task-checkbox {
+  flex-shrink: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--clr-border);
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  transition: background-color var(--transition-fast),
+              border-color var(--transition-fast);
+}
+
+.task-checkbox:hover {
+  border-color: var(--clr-success);
+}
+
+.task-checkbox:checked {
+  background-color: var(--clr-success);
+  border-color: var(--clr-success);
+}
+
+/* Checkmark tick */
+.task-checkbox:checked::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 6px;
+  width: 5px;
+  height: 9px;
+  border: 2px solid #0f1117;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+}
+
+/* --- Task text --- */
+.task-text {
+  flex: 1;
+  font-size: 0.95rem;
+  color: var(--clr-text-primary);
+  word-break: break-word;
+  transition: color var(--transition-mid), text-decoration var(--transition-mid);
+}
+
+/* --- Delete button --- */
+.btn-delete {
+  flex-shrink: 0;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--clr-text-muted);
+  border-radius: var(--radius-sm);
+  padding: var(--sp-xs) var(--sp-sm);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: color var(--transition-fast),
+              border-color var(--transition-fast),
+              background-color var(--transition-fast);
+  line-height: 1;
+}
+
+.btn-delete:hover {
+  color: var(--clr-danger);
+  border-color: var(--clr-danger);
+  background-color: rgba(248, 113, 113, 0.1);
+}
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+.empty-state {
+  text-align: center;
+  padding: var(--sp-xl) var(--sp-md);
+  color: var(--clr-text-muted);
+  font-size: 0.9rem;
+  display: none; /* shown via JS */
+}
+
+.empty-icon {
+  font-size: 2.5rem;
+  margin-bottom: var(--sp-sm);
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.app-footer {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--clr-text-muted);
+  border-top: 1px solid var(--clr-border);
+  padding-top: var(--sp-md);
+}
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================================
+   RESPONSIVE  — small screens
+   ============================================================ */
+@media (max-width: 480px) {
+  .app-wrapper {
+    padding: var(--sp-lg) var(--sp-md);
+    border-radius: var(--radius-md);
+  }
+
+  .task-form {
+    flex-direction: column;
+  }
+
+  .btn-add {
+    width: 100%;
+  }
+}
