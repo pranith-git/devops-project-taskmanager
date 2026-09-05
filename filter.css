@@ -1,0 +1,189 @@
+:root {
+  --ink: #17222d;
+  --muted: #6d7984;
+  --line: #dce4e8;
+  --paper: #f7faf8;
+  --panel: #ffffff;
+  --accent: #e56f4f;
+  --accent-soft: #fff0eb;
+  --green: #21856b;
+  --green-soft: #e6f5ef;
+  --shadow: 0 18px 50px rgba(38, 60, 68, 0.09);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-width: 320px;
+  color: var(--ink);
+  background: var(--paper);
+  font-family: 'Trebuchet MS', sans-serif;
+}
+
+body::before {
+  position: fixed;
+  inset: 0 0 auto;
+  height: 310px;
+  z-index: -1;
+  content: '';
+  background: #dff0eb;
+  clip-path: polygon(0 0, 100% 0, 100% 76%, 72% 100%, 28% 82%, 0 94%);
+}
+
+.page-shell {
+  width: min(100% - 32px, 820px);
+  margin: 0 auto;
+  padding: 72px 0 80px;
+}
+
+.task-panel {
+  padding: clamp(28px, 6vw, 58px);
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.page-header { margin-bottom: 38px; }
+
+.eyebrow {
+  margin: 0 0 14px;
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+h1, h2 { font-family: 'Trebuchet MS', sans-serif; }
+
+h1 {
+  max-width: 510px;
+  margin: 0;
+  font-size: clamp(2.4rem, 7vw, 4.6rem);
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+}
+
+.intro {
+  margin: 18px 0 0;
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+.controls { display: grid; gap: 14px; }
+
+.search-field {
+  display: flex;
+  align-items: center;
+  min-height: 52px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  background: #fcfdfd;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.search-field:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.search-icon {
+  margin-right: 10px;
+  color: var(--muted);
+  font-size: 1.55rem;
+  line-height: 1;
+}
+
+.search-field input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  color: var(--ink);
+  background: transparent;
+  font: inherit;
+}
+
+.search-field input::placeholder { color: #9aa5ab; }
+
+.clear-button {
+  width: 28px;
+  height: 28px;
+  border: 0;
+  color: var(--muted);
+  background: transparent;
+  font-size: 1.35rem;
+  cursor: pointer;
+}
+
+.filter-group {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filter-button {
+  padding: 9px 15px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  background: var(--panel);
+  font: 600 0.85rem 'Trebuchet MS', sans-serif;
+  cursor: pointer;
+  transition: 160ms ease;
+}
+
+.filter-button:hover { border-color: var(--accent); color: var(--accent); }
+.filter-button.is-active { border-color: var(--ink); color: var(--panel); background: var(--ink); }
+
+.list-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 48px;
+  padding-bottom: 14px;
+  border-bottom: 2px solid var(--ink);
+}
+
+.list-heading h2 { margin: 0; font-size: 1.35rem; }
+.list-heading p { margin: 0; color: var(--muted); font-size: 0.85rem; }
+.task-list { display: grid; gap: 10px; margin: 14px 0 0; padding: 0; list-style: none; }
+
+.task-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 66px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  animation: reveal 240ms ease both;
+}
+
+.status-mark {
+  display: grid;
+  flex: 0 0 28px;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid #b8c8c4;
+  border-radius: 50%;
+  color: transparent;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.task-item.completed .status-mark { border-color: var(--green); color: var(--green); background: var(--green-soft); }
+.task-name { flex: 1; font-weight: 600; }
+.task-item.completed .task-name { color: var(--muted); text-decoration: line-through; }
+.task-status { color: var(--muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; }
+.empty-state { margin: 24px 0 0; color: var(--muted); text-align: center; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+@keyframes reveal { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 520px) {
+  .page-shell { width: min(100% - 20px, 820px); padding-top: 34px; }
+  .task-panel { padding: 26px 20px 32px; }
+  .task-status { display: none; }
+}
