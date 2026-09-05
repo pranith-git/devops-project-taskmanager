@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Task Priority & Category</title>
+  <link rel="stylesheet" href="priority.css">
+</head>
+<body>
+  <main class="wrap">
+    <h1>Task Priority & Category</h1>
+
+    <form id="taskForm" class="task-form" autocomplete="off">
+      <div class="row">
+        <label for="title">Task</label>
+        <input id="title" name="title" type="text" placeholder="What needs doing?" required />
+      </div>
+
+      <div class="row two-cols">
+        <div>
+          <label for="category">Category</label>
+          <select id="category" name="category">
+            <option value="Study">Study</option>
+            <option value="Personal">Personal</option>
+            <option value="Project">Project</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="priority">Priority</label>
+          <select id="priority" name="priority">
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row actions">
+        <button type="submit" class="btn add">Add Task</button>
+        <button type="button" id="clearBtn" class="btn clear">Clear All</button>
+      </div>
+    </form>
+
+    <section class="list-wrap">
+      <h2>Tasks</h2>
+      <ul id="taskList" class="task-list"></ul>
+      <p id="empty" class="empty">No tasks yet — add one above.</p>
+    </section>
+  </main>
+
+  <script src="priority.js" defer></script>
+</body>
+</html>

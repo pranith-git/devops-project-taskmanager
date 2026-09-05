@@ -1,0 +1,40 @@
+:root{
+  --bg:#f6f8fa;
+  --card:#ffffff;
+  --muted:#6b7280;
+  --accent:#2563eb;
+  --low:#16a34a;
+  --medium:#f59e0b;
+  --high:#ef4444;
+}
+*{box-sizing:border-box}
+body{font-family:Inter,Segoe UI,Arial,sans-serif;margin:0;background:var(--bg);color:#111}
+.wrap{max-width:760px;margin:36px auto;padding:20px}
+h1{margin:0 0 18px;font-size:20px}
+.task-form{background:var(--card);padding:16px;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
+.row{display:flex;flex-direction:column;margin-bottom:12px}
+.row.two-cols{display:flex;gap:12px}
+label{font-size:13px;color:var(--muted);margin-bottom:6px}
+input[type=text],select{padding:10px;border:1px solid #e6e9ee;border-radius:6px;font-size:14px}
+.actions{display:flex;gap:8px;align-items:center}
+.btn{padding:8px 12px;border-radius:6px;border:none;cursor:pointer;font-weight:600}
+.btn.add{background:var(--accent);color:#fff}
+.btn.clear{background:#f3f4f6;color:#111}
+.list-wrap{margin-top:18px}
+.task-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px}
+.task-item{background:var(--card);display:flex;align-items:center;justify-content:space-between;padding:12px;border-radius:8px;border-left:6px solid transparent;box-shadow:0 1px 2px rgba(0,0,0,0.04)}
+.task-left{display:flex;gap:12px;align-items:center}
+.task-title{font-weight:600}
+.meta{font-size:12px;color:var(--muted)}
+.badges{display:flex;gap:8px;align-items:center}
+.badge{font-size:12px;padding:4px 8px;border-radius:999px;background:#f3f4f6;color:#111}
+.priority-low{border-left-color:var(--low)}
+.priority-medium{border-left-color:var(--medium)}
+.priority-high{border-left-color:var(--high)}
+.priority-pill.low{background:rgba(22,163,74,0.12);color:var(--low)}
+.priority-pill.medium{background:rgba(245,158,11,0.12);color:var(--medium)}
+.priority-pill.high{background:rgba(239,68,68,0.08);color:var(--high)}
+.empty{color:var(--muted);margin-top:12px}
+.task-actions{display:flex;gap:8px}
+.icon-btn{background:transparent;border:1px solid #e6e9ee;padding:6px;border-radius:6px;cursor:pointer}
+@media (max-width:520px){.row.two-cols{flex-direction:column}}
