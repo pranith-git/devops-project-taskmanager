@@ -1,49 +1,165 @@
-const tasks = [
-  { title: 'Prepare sprint planning notes', category: 'Project', priority: 'High', completed: true },
-  { title: 'Review design handoff', category: 'Project', priority: 'High', completed: false },
-  { title: 'Update project documentation', category: 'Project', priority: 'Medium', completed: false },
-  { title: 'Reply to stakeholder feedback', category: 'Personal', priority: 'Medium', completed: true },
-  { title: 'Organise research references', category: 'Study', priority: 'Low', completed: true },
-  { title: "Plan next week's priorities", category: 'Personal', priority: 'Low', completed: false }
-];
-const $ = (id) => document.getElementById(id);
-const plural = (count, word) => `${count} ${word}${count === 1 ? '' : 's'}`;
+const STORAGE_KEY = 'taskManagerTasks';
+const taskStore = loadTasks();
 let activeFilter = 'all';
 
-function visibleTasks() {
-  const term = $('task-search').value.trim().toLowerCase();
-  return tasks.filter((task) => {
-    const matchesSearch = task.title.toLowerCase().includes(term) || task.category.toLowerCase().includes(term) || task.priority.toLowerCase().includes(term);
-    const matchesFilter = activeFilter === 'all' || (activeFilter === 'completed' && task.completed) || (activeFilter === 'pending' && !task.completed);
+function loadTasks() {
+  try {
+    const savedTasks = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    return Array.isArray(savedTasks) ? savedTasks : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveTasks() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(taskStore));
+}
+
+function getElement(id) {
+  return document.getElementById(id);
+}
+
+function plural(count, word) {
+  return `${count} ${word}${count === 1 ? '' : 's'}`;
+}
+
+function getVisibleTasks() {
+  const searchTerm = getElement('task-search').value.trim().toLowerCase();
+
+  return taskStore.filter((task) => {
+    const searchableText = `${task.title} ${task.category} ${task.priority}`.toLowerCase();
+    const matchesSearch = searchableText.includes(searchTerm);
+    const matchesFilter = activeFilter === 'all'
+      || (activeFilter === 'completed' && task.completed)
+      || (activeFilter === 'pending' && !task.completed);
     return matchesSearch && matchesFilter;
   });
 }
+
+function createTaskElement(task) {
+  const item = document.createElement('li');
+  item.className = `task-item${task.completed ? ' is-completed' : ''}`;
+
+  const checkbox = document.createElement('input');
+  checkbox.className = 'task-check';
+  checkbox.type = 'checkbox';
+  checkbox.checked = task.completed;
+  checkbox.setAttribute('aria-label', `Mark ${task.title} as completed`);
+  checkbox.addEventListener('change', () => {
+    task.completed = checkbox.checked;
+    saveTasks();
+    renderDashboard();
+  });
+
+  const title = document.createElement('span');
+  title.className = 'task-name';
+  title.textContent = task.title;
+
+  const category = document.createElement('span');
+  category.className = 'category';
+  category.textContent = task.category;
+
+  const priority = document.createElement('span');
+  priority.className = `priority priority-${task.priority.toLowerCase()}`;
+  priority.textContent = task.priority;
+
+  const remove = document.createElement('button');
+  remove.className = 'task-delete';
+  remove.type = 'button';
+  remove.textContent = 'Delete';
+  remove.setAttribute('aria-label', `Delete ${task.title}`);
+  remove.addEventListener('click', () => {
+    const taskIndex = taskStore.indexOf(task);
+    if (taskIndex !== -1) taskStore.splice(taskIndex, 1);
+    saveTasks();
+    renderDashboard();
+  });
+
+  item.append(checkbox, title, category, priority, remove);
+  return item;
+}
+
 function renderDashboard() {
-  const total = tasks.length, completed = tasks.filter((task) => task.completed).length, pending = total - completed;
-  const highPriority = tasks.filter((task) => task.priority === 'High' && !task.completed).length;
-  const percentage = total ? Math.round((completed / total) * 100) : 0, displayed = visibleTasks();
-  $('total-tasks').textContent = total; $('completed-tasks').textContent = completed; $('pending-tasks').textContent = pending; $('high-priority-tasks').textContent = highPriority;
-  $('completion-percentage').textContent = `${percentage}%`; $('progress-fill').style.width = `${percentage}%`; $('progress-track').setAttribute('aria-valuenow', percentage);
-  $('progress-summary').textContent = `${plural(completed, 'task')} complete out of ${total}`;
-  $('task-count').textContent = `${plural(displayed.length, 'task')} shown`; $('empty-state').hidden = displayed.length !== 0; $('clear-search').hidden = !$('task-search').value;
-  $('focus-message').textContent = highPriority ? `${plural(highPriority, 'high-priority task')} still need${highPriority === 1 ? 's' : ''} your attention.` : 'No pending high-priority tasks. Nice work!';
-  $('task-list').replaceChildren(...displayed.map((task) => taskElement(task)));
+  const total = taskStore.length;
+  const completed = taskStore.filter((task) => task.completed).length;
+  const pending = total - completed;
+  const highPriority = taskStore.filter((task) => task.priority === 'High' && !task.completed).length;
+  const percentage = total ? Math.round((completed / total) * 100) : 0;
+  const visibleTasks = getVisibleTasks();
+
+  getElement('total-tasks').textContent = total;
+  getElement('completed-tasks').textContent = completed;
+  getElement('pending-tasks').textContent = pending;
+  getElement('high-priority-tasks').textContent = highPriority;
+  getElement('completion-percentage').textContent = `${percentage}%`;
+  getElement('progress-fill').style.width = `${percentage}%`;
+  getElement('progress-track').setAttribute('aria-valuenow', percentage);
+  getElement('progress-summary').textContent = total
+    ? `${plural(completed, 'task')} complete out of ${total}`
+    : 'No tasks yet';
+  getElement('task-count').textContent = `${plural(visibleTasks.length, 'task')} shown`;
+  getElement('empty-state').hidden = visibleTasks.length !== 0;
+  getElement('clear-search').hidden = !getElement('task-search').value;
+  getElement('focus-message').textContent = highPriority
+    ? `${plural(highPriority, 'high-priority task')} still need${highPriority === 1 ? 's' : ''} your attention.`
+    : 'No pending high-priority tasks. Nice work!';
+  getElement('task-list').replaceChildren(...visibleTasks.map(createTaskElement));
 }
-function taskElement(task) {
-  const item = document.createElement('li'); item.className = `task-item${task.completed ? ' is-completed' : ''}`;
-  const check = document.createElement('input'); check.className = 'task-check'; check.type = 'checkbox'; check.checked = task.completed; check.setAttribute('aria-label', `Mark ${task.title} as completed`);
-  const title = document.createElement('span'); title.className = 'task-name'; title.textContent = task.title;
-  const category = document.createElement('span'); category.className = 'category'; category.textContent = task.category;
-  const priority = document.createElement('span'); priority.className = `priority priority-${task.priority.toLowerCase()}`; priority.textContent = task.priority;
-  const remove = document.createElement('button'); remove.className = 'task-delete'; remove.type = 'button'; remove.textContent = 'Delete';
-  check.addEventListener('change', () => { task.completed = !task.completed; renderDashboard(); });
-  remove.addEventListener('click', () => { tasks.splice(tasks.indexOf(task), 1); renderDashboard(); });
-  item.append(check, title, category, priority, remove); return item;
-}
-$('current-date').textContent = new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date());
-$('task-form').addEventListener('submit', (event) => { event.preventDefault(); const title = $('task-input').value.trim(); if (!title) { $('form-error').textContent = 'Enter a task before adding it.'; $('task-input').focus(); return; } tasks.unshift({ title, category: $('category-input').value, priority: $('priority-input').value, completed: false }); event.currentTarget.reset(); $('priority-input').value = 'Medium'; $('form-error').textContent = ''; $('task-input').focus(); renderDashboard(); });
-$('task-input').addEventListener('input', () => { $('form-error').textContent = ''; });
-$('task-search').addEventListener('input', renderDashboard);
-$('clear-search').addEventListener('click', () => { $('task-search').value = ''; $('task-search').focus(); renderDashboard(); });
-document.querySelectorAll('[data-filter]').forEach((button) => button.addEventListener('click', () => { activeFilter = button.dataset.filter; document.querySelectorAll('[data-filter]').forEach((candidate) => { const selected = candidate === button; candidate.classList.toggle('is-active', selected); candidate.setAttribute('aria-pressed', String(selected)); }); renderDashboard(); }));
+
+getElement('current-date').textContent = new Intl.DateTimeFormat(undefined, {
+  month: 'short',
+  day: 'numeric',
+  year: 'numeric'
+}).format(new Date());
+
+getElement('task-form').addEventListener('submit', (event) => {
+  event.preventDefault();
+  const titleInput = getElement('task-input');
+  const title = titleInput.value.trim();
+
+  if (!title) {
+    getElement('form-error').textContent = 'Enter a task before adding it.';
+    titleInput.focus();
+    return;
+  }
+
+  taskStore.unshift({
+    id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+    title,
+    category: getElement('category-input').value,
+    priority: getElement('priority-input').value,
+    completed: false
+  });
+  saveTasks();
+  event.currentTarget.reset();
+  getElement('priority-input').value = 'Medium';
+  getElement('form-error').textContent = '';
+  titleInput.focus();
+  renderDashboard();
+});
+
+getElement('task-input').addEventListener('input', () => {
+  getElement('form-error').textContent = '';
+});
+
+getElement('task-search').addEventListener('input', renderDashboard);
+
+getElement('clear-search').addEventListener('click', () => {
+  getElement('task-search').value = '';
+  getElement('task-search').focus();
+  renderDashboard();
+});
+
+document.querySelectorAll('[data-filter]').forEach((button) => {
+  button.addEventListener('click', () => {
+    activeFilter = button.dataset.filter;
+    document.querySelectorAll('[data-filter]').forEach((candidate) => {
+      const selected = candidate === button;
+      candidate.classList.toggle('is-active', selected);
+      candidate.setAttribute('aria-pressed', String(selected));
+    });
+    renderDashboard();
+  });
+});
+
 renderDashboard();
