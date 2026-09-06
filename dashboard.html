@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A standalone task dashboard with task statistics.">
+  <title>Task Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+  <main class="dashboard" aria-labelledby="page-title">
+    <header class="hero">
+      <div><p class="eyebrow">Task workspace</p><h1 id="page-title">Your task dashboard</h1><p class="intro">A clear overview of the work currently on your plate.</p></div>
+      <div class="today" aria-label="Current date"><span>Today</span><strong id="current-date"></strong></div>
+    </header>
+
+    <section class="metrics" aria-label="Task statistics">
+      <article class="metric-card total"><span class="metric-icon" aria-hidden="true">▦</span><p>Total tasks</p><strong id="total-tasks">0</strong><span>All assigned work</span></article>
+      <article class="metric-card completed"><span class="metric-icon" aria-hidden="true">✓</span><p>Completed</p><strong id="completed-tasks">0</strong><span>Tasks finished</span></article>
+      <article class="metric-card pending"><span class="metric-icon" aria-hidden="true">◷</span><p>Pending</p><strong id="pending-tasks">0</strong><span>Still to do</span></article>
+      <article class="metric-card high"><span class="metric-icon" aria-hidden="true">!</span><p>High priority</p><strong id="high-priority-tasks">0</strong><span>Need attention</span></article>
+    </section>
+
+    <section class="add-panel" aria-labelledby="add-task-heading">
+      <h2 id="add-task-heading" class="sr-only">Add a task</h2>
+      <form id="task-form" class="task-form" novalidate>
+        <input id="task-input" type="text" maxlength="150" placeholder="What needs to be done?" aria-label="Task description" autocomplete="off">
+        <select id="category-input" aria-label="Task category"><option>Study</option><option>Personal</option><option selected>Project</option><option>Other</option></select>
+        <select id="priority-input" aria-label="Task priority"><option>Low</option><option selected>Medium</option><option>High</option></select>
+        <button type="submit">Add task</button>
+      </form>
+      <p id="form-error" class="form-error" role="alert"></p>
+    </section>
+
+    <section class="content-grid">
+      <article class="progress-card" aria-labelledby="progress-heading">
+        <div class="card-heading"><div><p class="eyebrow">Weekly progress</p><h2 id="progress-heading">Completion rate</h2></div><strong id="completion-percentage">0%</strong></div>
+        <div id="progress-track" class="progress-track" role="progressbar" aria-label="Task completion progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="progress-fill"></span></div>
+        <p id="progress-summary">No tasks yet</p>
+      </article>
+      <article class="focus-card" aria-labelledby="focus-heading"><p class="eyebrow">Focus</p><h2 id="focus-heading">Priority snapshot</h2><p id="focus-message">Everything is under control.</p></article>
+    </section>
+
+    <section class="task-section" aria-labelledby="tasks-heading">
+      <div class="section-heading"><div><p class="eyebrow">Sample task data</p><h2 id="tasks-heading">Current tasks</h2></div><span id="task-count" class="task-count">0 tasks</span></div>
+      <div class="controls" aria-label="Task search and filters">
+        <label class="search-field" for="task-search"><span aria-hidden="true">⌕</span><span class="sr-only">Search tasks</span><input id="task-search" type="search" placeholder="Search tasks or categories..." autocomplete="off"><button id="clear-search" type="button" aria-label="Clear search" hidden>×</button></label>
+        <div class="filter-group" role="group" aria-label="Filter tasks by status"><button class="is-active" type="button" data-filter="all" aria-pressed="true">All</button><button type="button" data-filter="completed" aria-pressed="false">Completed</button><button type="button" data-filter="pending" aria-pressed="false">Pending</button></div>
+      </div>
+      <ul id="task-list" class="task-list" aria-live="polite"></ul>
+      <p id="empty-state" class="empty-state" hidden>No tasks match your current search or filter.</p>
+    </section>
+  </main>
+  <script src="dashboard.js"></script>
+</body>
+</html>
