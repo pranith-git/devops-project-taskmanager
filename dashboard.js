@@ -1,4 +1,5 @@
 const STORAGE_KEY = 'taskManagerTasks';
+const THEME_KEY = 'taskManagerTheme';
 const taskStore = loadTasks();
 let activeFilter = 'all';
 
@@ -17,6 +18,16 @@ function saveTasks() {
 
 function getElement(id) {
   return document.getElementById(id);
+}
+
+function setTheme(theme) {
+  const isDark = theme === 'dark';
+  document.documentElement.dataset.theme = theme;
+  localStorage.setItem(THEME_KEY, theme);
+  const toggle = getElement('theme-toggle');
+  toggle.setAttribute('aria-pressed', String(isDark));
+  toggle.setAttribute('aria-label', `Switch to ${isDark ? 'light' : 'dark'} mode`);
+  toggle.querySelector('.theme-toggle-label').textContent = isDark ? 'Light mode' : 'Dark mode';
 }
 
 function plural(count, word) {
@@ -111,6 +122,11 @@ getElement('current-date').textContent = new Intl.DateTimeFormat(undefined, {
   day: 'numeric',
   year: 'numeric'
 }).format(new Date());
+
+setTheme(document.documentElement.dataset.theme || 'light');
+getElement('theme-toggle').addEventListener('click', () => {
+  setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+});
 
 getElement('task-form').addEventListener('submit', (event) => {
   event.preventDefault();
