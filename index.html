@@ -20,6 +20,13 @@
     />
 
     <link rel="stylesheet" href="dashboard.css" />
+    <script>
+      (() => {
+        const savedTheme = localStorage.getItem('taskManagerTheme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.dataset.theme = savedTheme || (prefersDark ? 'dark' : 'light');
+      })();
+    </script>
   </head>
   <body>
     <main class="dashboard" aria-labelledby="page-title">
@@ -29,7 +36,17 @@
           <h1 id="page-title">Your task dashboard</h1>
           <p class="intro">Plan, prioritise, and finish the work on your plate.</p>
         </div>
-        <div class="today" aria-label="Current date"><span>Today</span><strong id="current-date"></strong></div>
+        <div class="hero-actions">
+          <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
+            <span class="theme-toggle-track" aria-hidden="true">
+              <svg class="theme-icon sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+              <svg class="theme-icon moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.3 15.1A8.8 8.8 0 0 1 8.9 3.7 8.8 8.8 0 1 0 20.3 15.1Z"/></svg>
+              <span class="theme-toggle-knob"></span>
+            </span>
+            <span class="theme-toggle-label">Dark mode</span>
+          </button>
+          <div class="today" aria-label="Current date"><span>Today</span><strong id="current-date"></strong></div>
+        </div>
       </header>
 
       <section class="metrics" aria-label="Task statistics">
