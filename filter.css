@@ -166,11 +166,20 @@ h1 {
   place-items: center;
   width: 28px;
   height: 28px;
+  padding: 0;
   border: 1px solid #b8c8c4;
   border-radius: 50%;
   color: transparent;
+  background: var(--panel);
+  font: inherit;
   font-size: 0.9rem;
   font-weight: 700;
+  cursor: pointer;
+}
+
+.status-mark:focus-visible {
+  outline: 3px solid var(--accent-soft);
+  outline-offset: 2px;
 }
 
 .task-item.completed .status-mark { border-color: var(--green); color: var(--green); background: var(--green-soft); }
