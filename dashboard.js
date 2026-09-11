@@ -1,7 +1,11 @@
 const STORAGE_KEY = 'taskManagerTasks';
 const THEME_KEY = 'taskManagerTheme';
 const taskStore = loadTasks();
+const priorityFilter = document.getElementById('priority-filter');
+const categoryFilter = document.getElementById('category-filter');
 let activeFilter = 'all';
+let activePriority = 'all';
+let activeCategory = 'all';
 
 function loadTasks() {
   try {
@@ -40,10 +44,13 @@ function getVisibleTasks() {
   return taskStore.filter((task) => {
     const searchableText = `${task.title} ${task.category} ${task.priority}`.toLowerCase();
     const matchesSearch = searchableText.includes(searchTerm);
-    const matchesFilter = activeFilter === 'all'
+    const matchesStatus = activeFilter === 'all'
       || (activeFilter === 'completed' && task.completed)
       || (activeFilter === 'pending' && !task.completed);
-    return matchesSearch && matchesFilter;
+    const matchesPriority = activePriority === 'all' || task.priority === activePriority;
+    const matchesCategory = activeCategory === 'all' || task.category === activeCategory;
+
+    return matchesSearch && matchesStatus && matchesPriority && matchesCategory;
   });
 }
 
@@ -176,6 +183,16 @@ document.querySelectorAll('[data-filter]').forEach((button) => {
     });
     renderDashboard();
   });
+});
+
+priorityFilter.addEventListener('change', (event) => {
+  activePriority = event.target.value;
+  renderDashboard();
+});
+
+categoryFilter.addEventListener('change', (event) => {
+  activeCategory = event.target.value;
+  renderDashboard();
 });
 
 renderDashboard();
