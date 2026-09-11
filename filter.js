@@ -7,8 +7,12 @@ const clearSearch = document.querySelector('#clear-search');
 const taskCount = document.querySelector('#task-count');
 const emptyState = document.querySelector('#empty-state');
 const filterButtons = document.querySelectorAll('[data-filter]');
+const priorityFilter = document.querySelector('#priority-filter');
+const categoryFilter = document.querySelector('#category-filter');
 
 let activeFilter = 'all';
+let activePriority = 'all';
+let activeCategory = 'all';
 
 function loadTasks() {
   try {
@@ -39,11 +43,13 @@ function getVisibleTasks() {
   return tasks.filter((task) => {
     const searchableText = `${task.title} ${task.category} ${task.priority}`.toLowerCase();
     const matchesSearch = searchableText.includes(searchTerm);
-    const matchesFilter = activeFilter === 'all'
+    const matchesStatus = activeFilter === 'all'
       || (activeFilter === 'completed' && task.completed)
       || (activeFilter === 'pending' && !task.completed);
+    const matchesPriority = activePriority === 'all' || task.priority === activePriority;
+    const matchesCategory = activeCategory === 'all' || task.category === activeCategory;
 
-    return matchesSearch && matchesFilter;
+    return matchesSearch && matchesStatus && matchesPriority && matchesCategory;
   });
 }
 
@@ -83,6 +89,16 @@ filterButtons.forEach((button) => {
     });
     renderTasks();
   });
+});
+
+priorityFilter.addEventListener('change', (event) => {
+  activePriority = event.target.value;
+  renderTasks();
+});
+
+categoryFilter.addEventListener('change', (event) => {
+  activeCategory = event.target.value;
+  renderTasks();
 });
 
 taskSearch.addEventListener('input', renderTasks);
