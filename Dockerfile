@@ -10,9 +10,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY backend ./backend
 
-RUN mkdir -p /data
-VOLUME ["/data"]
-
 EXPOSE 5000
 
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "2", "--access-logfile", "-", "--error-logfile", "-", "backend.app:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "1", "--access-logfile", "-", "--error-logfile", "-", "backend.app:app"]

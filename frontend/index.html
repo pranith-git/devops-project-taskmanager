@@ -45,6 +45,7 @@
             </span>
             <span class="theme-toggle-label">Dark mode</span>
           </button>
+          <button id="logout-btn" type="button" class="theme-toggle" style="margin-left: 10px;">Logout</button>
           <div class="today" aria-label="Current date"><span>Today</span><strong id="current-date"></strong></div>
         </div>
       </header>
@@ -87,6 +88,20 @@
       </section>
     </main>
 
+    <script src="dashboard-guard.js"></script>
     <script src="dashboard.js"></script>
+    <script>
+      document.getElementById('logout-btn')?.addEventListener('click', async () => {
+        try {
+          await fetch('http://127.0.0.1:5000/api/logout', {
+            method: 'POST',
+            credentials: 'include',
+          });
+        } finally {
+          localStorage.removeItem('taskmanager_session');
+          window.location.href = 'login.html';
+        }
+      });
+    </script>
   </body>
 </html>

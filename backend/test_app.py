@@ -1,10 +1,11 @@
-import sqlite3
 import tempfile
 import unittest
-from contextlib import closing
 from pathlib import Path
 
+from sqlalchemy import URL, select
+
 from app import create_app
+from app import users
 
 
 class AuthApiTests(unittest.TestCase):
@@ -15,12 +16,17 @@ class AuthApiTests(unittest.TestCase):
             {
                 "TESTING": True,
                 "SECRET_KEY": "test-secret",
-                "DATABASE_PATH": str(self.database_path),
+                "DATABASE_URL": URL.create(
+                    "sqlite",
+                    database=str(self.database_path),
+                ),
             }
         )
+        self.engine = self.app.extensions["database_engine"]
         self.client = self.app.test_client()
 
     def tearDown(self):
+        self.engine.dispose()
         self.temp_dir.cleanup()
 
     def test_registration_stores_a_password_hash(self):
@@ -30,10 +36,11 @@ class AuthApiTests(unittest.TestCase):
         )
 
         self.assertEqual(response.status_code, 201)
-        with closing(sqlite3.connect(self.database_path)) as connection:
-            username, password_hash = connection.execute(
-                "SELECT username, password_hash FROM users"
-            ).fetchone()
+        with self.engine.connect() as connection:
+            user = connection.execute(
+                select(users.c.username, users.c.password_hash)
+            ).one()
+        username, password_hash = user
         self.assertEqual(username, "alice")
         self.assertNotEqual(password_hash, "a-secure-password")
 

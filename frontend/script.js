@@ -219,17 +219,3 @@ function deleteTask(id) {
 /**
  * Form submission — triggered by the "Add Task" button or pressing Enter.
  */
-taskForm.addEventListener('submit', (event) => {
-  event.preventDefault(); // prevent page reload
-  addTask(taskInput.value);
-});
-
-/**
- * Clear the error as soon as the user starts typing again.
- */
-taskInput.addEventListener('input', clearError);
-
-// ── Initialise ────────────────────────────────────────────────────────────────
-
-// Sync the stats bar and empty-state on first load
-updateUI();

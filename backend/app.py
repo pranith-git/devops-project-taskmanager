@@ -1,51 +1,89 @@
 import os
 import re
-import sqlite3
-from contextlib import closing
 from pathlib import Path
 
 from flask import Flask, jsonify, request, session
+from sqlalchemy import (
+    Column,
+    DateTime,
+    Integer,
+    MetaData,
+    String,
+    Table,
+    Text,
+    URL,
+    create_engine,
+    func,
+    select,
+)
+from sqlalchemy.exc import IntegrityError
 from werkzeug.security import check_password_hash, generate_password_hash
 
 USERNAME_PATTERN = re.compile(r"[a-zA-Z0-9_.-]{3,32}")
 MIN_PASSWORD_LENGTH = 8
 MAX_PASSWORD_LENGTH = 128
 
+metadata = MetaData()
+users = Table(
+    "users",
+    metadata,
+    Column("id", Integer, primary_key=True),
+    Column("username", String(32), nullable=False, unique=True),
+    Column("password_hash", Text, nullable=False),
+    Column("created_at", DateTime, nullable=False, server_default=func.current_timestamp()),
+)
+
 
 def create_app(test_config=None):
     app = Flask(__name__)
     app.config.from_mapping(
         SECRET_KEY=os.environ.get("SECRET_KEY", "development-only-change-this"),
+        DATABASE_URL=os.environ.get("DATABASE_URL"),
         DATABASE_PATH=os.environ.get(
             "DATABASE_PATH", str(Path(__file__).parent / "instance" / "users.sqlite3")
         ),
+        DB_HOST=os.environ.get("DB_HOST"),
+        DB_PORT=int(os.environ.get("DB_PORT", "5432")),
+        DB_NAME=os.environ.get("DB_NAME", "taskmanager"),
+        DB_USER=os.environ.get("DB_USER", "taskmanager"),
+        DB_PASSWORD=os.environ.get("DB_PASSWORD"),
         SESSION_COOKIE_HTTPONLY=True,
         SESSION_COOKIE_SAMESITE="Lax",
         SESSION_COOKIE_SECURE=os.environ.get("SESSION_COOKIE_SECURE", "").lower()
         in {"1", "true", "yes"},
     )
+
+    @app.after_request
+    def add_cors_headers(response):
+        origin = request.headers.get("Origin")
+        if origin:
+            response.headers["Access-Control-Allow-Origin"] = origin
+            response.headers["Access-Control-Allow-Credentials"] = "true"
+            response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+            response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+        return response
+
     if test_config:
         app.config.update(test_config)
 
-    database_path = Path(app.config["DATABASE_PATH"])
-    database_path.parent.mkdir(parents=True, exist_ok=True)
-    with closing(sqlite3.connect(database_path)) as connection:
-        with connection:
-            connection.execute(
-                """
-                CREATE TABLE IF NOT EXISTS users (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    username TEXT NOT NULL UNIQUE COLLATE NOCASE,
-                    password_hash TEXT NOT NULL,
-                    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-                )
-                """
-            )
+    database_url = app.config["DATABASE_URL"]
+    if database_url is None and app.config["DB_HOST"]:
+        database_url = URL.create(
+            "postgresql+psycopg",
+            username=app.config["DB_USER"],
+            password=app.config["DB_PASSWORD"],
+            host=app.config["DB_HOST"],
+            port=app.config["DB_PORT"],
+            database=app.config["DB_NAME"],
+        )
+    elif database_url is None:
+        database_path = Path(app.config["DATABASE_PATH"])
+        database_path.parent.mkdir(parents=True, exist_ok=True)
+        database_url = URL.create("sqlite", database=str(database_path))
 
-    def connect_db():
-        connection = sqlite3.connect(app.config["DATABASE_PATH"], timeout=5)
-        connection.row_factory = sqlite3.Row
-        return connection
+    engine = create_engine(database_url, pool_pre_ping=True)
+    metadata.create_all(engine)
+    app.extensions["database_engine"] = engine
 
     def json_error(message, status):
         return jsonify(error=message), status
@@ -86,13 +124,14 @@ def create_app(test_config=None):
 
         username, password = data
         try:
-            with closing(connect_db()) as connection:
-                with connection:
-                    connection.execute(
-                        "INSERT INTO users (username, password_hash) VALUES (?, ?)",
-                        (username, generate_password_hash(password)),
+            with engine.begin() as connection:
+                connection.execute(
+                    users.insert().values(
+                        username=username,
+                        password_hash=generate_password_hash(password),
                     )
-        except sqlite3.IntegrityError:
+                )
+        except IntegrityError:
             return json_error("Username is already registered.", 409)
 
         return jsonify(username=username), 201
@@ -104,11 +143,12 @@ def create_app(test_config=None):
             return error
 
         username, password = data
-        with closing(connect_db()) as connection:
+        with engine.connect() as connection:
             user = connection.execute(
-                "SELECT id, username, password_hash FROM users WHERE username = ?",
-                (username,),
-            ).fetchone()
+                select(users.c.id, users.c.username, users.c.password_hash).where(
+                    users.c.username == username
+                )
+            ).mappings().one_or_none()
         if user is None or not check_password_hash(user["password_hash"], password):
             return json_error("Invalid username or password.", 401)
 
