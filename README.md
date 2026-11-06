@@ -16,7 +16,7 @@ unique strong values, then run:
 docker compose up --build
 ```
 
-The app is available at:
+The app is available at the following local URLs:
 
 - Frontend login page: `http://127.0.0.1:8081/login.html`
 - Frontend dashboard: `http://127.0.0.1:8081/index.html`
